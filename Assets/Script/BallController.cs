@@ -42,11 +42,9 @@ public class BallController : MonoBehaviour
         }
     }
     private void StartMoving(){
-        int randomX = UnityEngine.Random.Range(-1,2);
-        print("x generated: " + randomX);
+        int randomX = randomizeNumberWithException(-1,1,0);
+        
         float randomY = 0;
-        //float randomY = UnityEngine.Random.Range(-1f,1.1f);
-        print("x generated: " + randomY);
 
         Vector2 direction = new Vector2(randomX*speed, randomY);
         print("Vector created"+ direction);
@@ -57,8 +55,17 @@ public class BallController : MonoBehaviour
         rb.velocity = direction;
     }
     private void PlayerTouch(){
-        Vector2 direction = new Vector2(-rb.velocity.x, UnityEngine.Random.Range(-2f,2.001f));
+        Vector2 direction = new Vector2(-rb.velocity.x, UnityEngine.Random.Range(-2f,2f));
         rb.velocity = direction;
+    }
+
+    private int randomizeNumberWithException(int beginInclusive,int endInclusive,int exception){
+
+        int generatedNumber = UnityEngine.Random.Range(beginInclusive,endInclusive+1);
+        if(generatedNumber==exception){
+            generatedNumber = randomizeNumberWithException(beginInclusive,endInclusive,exception);
+        }
+        return generatedNumber;
     }
    
 }
