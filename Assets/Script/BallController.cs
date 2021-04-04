@@ -55,7 +55,8 @@ public class BallController : MonoBehaviour
         rb.velocity = direction;
     }
     private void PlayerTouch(){
-        Vector2 direction = new Vector2(-rb.velocity.x, UnityEngine.Random.Range(-2f,2f));
+
+        Vector2 direction = new Vector2(-rb.velocity.x, UnityEngine.Random.Range(-5f,5f));
         rb.velocity = direction;
     }
 
