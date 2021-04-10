@@ -5,13 +5,16 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class BallController : MonoBehaviour
 {
-    private float speed = 10.0f;
+    private float speed = 12.0f;
     public static Action<WallType> WallCollision;
     private Rigidbody2D rb;
-    
+    private AudioSource audioSource;
+    [SerializeField]
+    private AudioClip [] audioClipArray;
     private Vector2 initPosition; 
     private void Awake() {
        rb=GetComponent<Rigidbody2D>();
+       audioSource = GetComponent<AudioSource>();
     }
     void Start()
     {
@@ -35,27 +38,35 @@ public class BallController : MonoBehaviour
             }
         }
         if(other.gameObject.tag == "Player"){
-            PlayerTouch();
+            DirectionChangeByPlayer();
+            PlayHitSound();
         }
         if(other.gameObject.tag == "border"){
             BorderTouch();
         }
     }
+
+    private void PlayHitSound()
+    {
+       audioSource.PlayOneShot(GetRandomHitAudio(),0.5f);
+    }
+    private AudioClip GetRandomHitAudio(){
+        return audioClipArray[UnityEngine.Random.Range(0, audioClipArray.Length)];
+    }
+
     private void StartMoving(){
         int randomX = randomizeNumberWithException(-1,1,0);
         
         float randomY = 0;
 
         Vector2 direction = new Vector2(randomX*speed, randomY);
-        print("Vector created"+ direction);
         rb.velocity = direction;
     }
     private void BorderTouch(){
         Vector2 direction = new Vector2(rb.velocity.x, -rb.velocity.y + UnityEngine.Random.Range(-0.1f,0.1f));
         rb.velocity = direction;
     }
-    private void PlayerTouch(){
-
+    private void DirectionChangeByPlayer(){
         Vector2 direction = new Vector2(-rb.velocity.x, UnityEngine.Random.Range(-5f,5f));
         rb.velocity = direction;
     }
