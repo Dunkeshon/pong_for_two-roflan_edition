@@ -48,7 +48,7 @@ public class BallController : MonoBehaviour
 
     private void PlayHitSound()
     {
-       audioSource.PlayOneShot(GetRandomHitAudio(),0.5f);
+       audioSource.PlayOneShot(GetRandomHitAudio(),0.7f);
     }
     private AudioClip GetRandomHitAudio(){
         return audioClipArray[UnityEngine.Random.Range(0, audioClipArray.Length)];
