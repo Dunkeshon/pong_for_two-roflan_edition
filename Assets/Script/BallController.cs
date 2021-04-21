@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class BallController : MonoBehaviour
 {
-    private float speed = 12.0f;
+    private float speed = 14.0f;
     public static Action<WallType> WallCollision;
     private Rigidbody2D rb;
     private AudioSource audioSource;
@@ -56,16 +56,20 @@ public class BallController : MonoBehaviour
         
         float randomY = 0;
 
-        Vector2 direction = new Vector2(randomX*speed, randomY);
-        rb.velocity = direction;
+        Vector2 direction = new Vector2(randomX, randomY);
+        rb.velocity = direction.normalized * speed;
+      
     }
     private void BorderTouch(){
         Vector2 direction = new Vector2(rb.velocity.x, -rb.velocity.y + UnityEngine.Random.Range(-0.1f,0.1f));
-        rb.velocity = direction;
+        rb.velocity = direction.normalized * speed;
+       
     }
     private void DirectionChangeByPlayer(){
         Vector2 direction = new Vector2(-rb.velocity.x, UnityEngine.Random.Range(-5f,5f));
-        rb.velocity = direction;
+        var tempNormalized = direction.normalized * speed;
+        rb.velocity = direction.normalized * speed;
+      
     }
 
     private int randomizeNumberWithException(int beginInclusive,int endInclusive,int exception){
