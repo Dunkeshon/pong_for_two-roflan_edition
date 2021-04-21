@@ -22,10 +22,7 @@ public class BallController : MonoBehaviour
         StartMoving();
     }
 
-    void Update()
-    {
-        
-    }
+ 
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.tag=="right wall"){
             if(WallCollision!=null){
