@@ -1,32 +1,46 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class BallController : MonoBehaviour
 {
-    private float speed = 14.0f;
-    private Rigidbody2D rb;
+    GameController gameController;
+
+    Animation anim;
+    private int ballSpeed;
+
+    public int BallSpeed{
+        get{return ballSpeed;}
+        set{
+            if(value>gameController.gameStats.MaxBallSpeed){
+                return;
+            }
+            else{
+                ballSpeed=value;
+            }
+        }
+
+    }
+    public Rigidbody2D rb;
     private AudioSource audioSource;
     [SerializeField]
     private AudioClip [] audioClipArray;
-    private Vector2 initPosition; 
+
+    
     private void Awake() {
-       rb=GetComponent<Rigidbody2D>();
-       audioSource = GetComponent<AudioSource>();
-    }
-    void Start()
-    {
-        initPosition = new Vector2(0,0);
-        StartMoving();
+        anim = GetComponent<Animation>();
+        rb=GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
- 
     private void OnTriggerEnter2D(Collider2D other) {
-        if(other.gameObject.tag=="right wall"){
+        if(other.gameObject.tag=="rightGate"){
             Events.WallCollision?.Invoke(WallType.RightWall);
         }
-        else if(other.gameObject.tag=="left wall"){
+        else if(other.gameObject.tag=="left gate"){
             Events.WallCollision?.Invoke(WallType.leftWall);
         }
         if(other.gameObject.tag == "Player"){
@@ -37,7 +51,14 @@ public class BallController : MonoBehaviour
             BorderTouch();
         }
     }
-
+    public void PlayFadeAnimation(){
+        anim.Play("startGameAnim");
+    }
+    public IEnumerator WaitAndStartMoving(){
+        yield return new WaitForSeconds(2);
+        anim.Stop();
+        StartMoving();
+    }
     private void PlayHitSound()
     {
        audioSource.PlayOneShot(GetRandomHitAudio(),1f);
@@ -46,24 +67,25 @@ public class BallController : MonoBehaviour
         return audioClipArray[UnityEngine.Random.Range(0, audioClipArray.Length)];
     }
 
-    private void StartMoving(){
+   // use in gamecontroller
+    public void StartMoving(){
         int randomX = randomizeNumberWithException(-1,1,0);
         
         float randomY = 0;
 
         Vector2 direction = new Vector2(randomX, randomY);
-        rb.velocity = direction.normalized * speed;
+        rb.velocity = direction.normalized * BallSpeed;
       
     }
     private void BorderTouch(){
         Vector2 direction = new Vector2(rb.velocity.x, -rb.velocity.y + UnityEngine.Random.Range(-0.1f,0.1f));
-        rb.velocity = direction.normalized * speed;
+        rb.velocity = direction.normalized * BallSpeed;
        
     }
     private void DirectionChangeByPlayer(){
         Vector2 direction = new Vector2(-rb.velocity.x, UnityEngine.Random.Range(-5f,5f));
-        var tempNormalized = direction.normalized * speed;
-        rb.velocity = direction.normalized * speed;
+        var tempNormalized = direction.normalized * BallSpeed;
+        rb.velocity = direction.normalized * BallSpeed;
       
     }
 
