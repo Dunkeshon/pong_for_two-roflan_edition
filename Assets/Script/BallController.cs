@@ -6,7 +6,6 @@ using UnityEngine;
 public class BallController : MonoBehaviour
 {
     private float speed = 14.0f;
-    public static Action<WallType> WallCollision;
     private Rigidbody2D rb;
     private AudioSource audioSource;
     [SerializeField]
@@ -25,14 +24,10 @@ public class BallController : MonoBehaviour
  
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.tag=="right wall"){
-            if(WallCollision!=null){
-                WallCollision(WallType.RightWall);
-            }
+            Events.WallCollision?.Invoke(WallType.RightWall);
         }
         else if(other.gameObject.tag=="left wall"){
-            if(WallCollision!=null){
-                WallCollision(WallType.leftWall);
-            }
+            Events.WallCollision?.Invoke(WallType.leftWall);
         }
         if(other.gameObject.tag == "Player"){
             DirectionChangeByPlayer();
