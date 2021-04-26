@@ -36,10 +36,51 @@ public class GameController : MonoBehaviour
         StartNewMatch();
     }
     private void OnEnable() {
-        Events.WallCollision += ScoreGoal;
-        Events.WallCollision += StartNewRound;
+
+        Events.WallCollision += GoalScored;
         Events.ScoreChanged += UpdateUiscore;
-        // Events.PlayerWon += 
+        Events.PlayerWon += ShowWinnerLabel;
+        //to do 
+        //when win - hide player
+        //ball acceleration corotine during each round 
+    }
+    private void OnDisable() {
+        Events.WallCollision -= GoalScored;
+        Events.ScoreChanged  -= UpdateUiscore;
+        Events.PlayerWon -= ShowWinnerLabel;
+    }
+
+    private void GoalScored(WallType wallType)
+    {
+        ScoreGoal(wallType);
+        if(gameStats.LeftPlayerScore==gameStats.ScoreToWin)
+        {
+            Events.PlayerWon?.Invoke(PlayerType.Left);
+            return;
+        }
+        else if(gameStats.RightPlayerScore==gameStats.ScoreToWin){
+            Events.PlayerWon?.Invoke(PlayerType.Right);
+        }
+        else{
+            StartNewRound();
+        }
+
+    }
+
+    private void ShowWinnerLabel(PlayerType playerType)
+    {
+        string winnerText;
+        if(playerType==PlayerType.Left){
+            winnerText = "Left player Win!";
+        }
+        
+        else if(playerType==PlayerType.Right){
+            winnerText = "Right player Win!";
+        }
+        else{
+            winnerText = "bug win! lmao";
+        }
+        Debug.Log(winnerText);
     }
 
     private void UpdateUiscore(PlayerType playerType, int newScore)
@@ -55,15 +96,10 @@ public class GameController : MonoBehaviour
         }
     }
 
-    private void OnDisable() {
-        Events.WallCollision -= ScoreGoal;
-        Events.WallCollision -= StartNewRound;
-        Events.ScoreChanged  -= UpdateUiscore;
-    }
 
 
     void ScoreGoal(WallType wallType){
-        if(wallType==WallType.leftWall){
+        if(wallType==WallType.LeftWall){
             gameStats.RightPlayerScore++;
         }
         else if(wallType==WallType.RightWall){
@@ -90,16 +126,8 @@ public class GameController : MonoBehaviour
     }
     //same method but without param
     public void StartNewRound(){
-        if(gameStats.LeftPlayerScore==gameStats.ScoreToWin||gameStats.RightPlayerScore==gameStats.ScoreToWin)
-        {
-            return;
-        }
-        RepositionBall();
-        ballController.BallSpeed = gameStats.DefaultBallSpeed;
-        ballController.PlayFadeAnimation();
-        StartCoroutine(ballController.WaitAndStartMoving());
+        StartNewRound(WallType.NotSetted);
     }
-    
     private void RepositionBall()
     {
         ball.transform.position = gameStats.InitBallPosition;
@@ -123,7 +151,7 @@ public class GameStats{
     public int MaxBallSpeed = 20;
     public int DefaultBallSpeed = 9;
     public Vector3 StartVelocity;
-    public int ScoreToWin = 10 ;
+    public int ScoreToWin = 2 ;
     public int DefaultScore = 0;
     private int leftPlayerScore;
     private int rightPlayerScore;
@@ -139,14 +167,9 @@ public class GameStats{
                 Debug.Log("Score exceeded ScoreToWin");
                 return;
             }
-            else if(value<ScoreToWin){
+            else if(value<=ScoreToWin){
                 leftPlayerScore = value;
                 Events.ScoreChanged?.Invoke(PlayerType.Left,leftPlayerScore);
-            }
-            if(value==ScoreToWin){
-                Events.ScoreChanged?.Invoke(PlayerType.Left,leftPlayerScore);
-                // new function which show winner label
-                Events.PlayerWon?.Invoke(PlayerType.Left);
             }
         }
     }
@@ -160,14 +183,9 @@ public class GameStats{
                 Debug.Log("Score exceeded ScoreToWin");
                 return;
             }
-            else if(value<ScoreToWin){
+            else if(value<=ScoreToWin){
                 rightPlayerScore = value;
                 Events.ScoreChanged?.Invoke(PlayerType.Right,rightPlayerScore);
-            }
-            if(value==ScoreToWin){
-                rightPlayerScore = value;
-                Events.ScoreChanged?.Invoke(PlayerType.Right,rightPlayerScore);
-                Events.PlayerWon?.Invoke(PlayerType.Right);
             }
         }
     }

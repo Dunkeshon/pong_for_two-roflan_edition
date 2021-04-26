@@ -6,5 +6,5 @@
     }
 
     public enum WallType{
-        leftWall, RightWall
+        NotSetted,LeftWall, RightWall
     }

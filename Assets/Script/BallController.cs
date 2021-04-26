@@ -41,7 +41,7 @@ public class BallController : MonoBehaviour
             Events.WallCollision?.Invoke(WallType.RightWall);
         }
         else if(other.gameObject.tag=="left gate"){
-            Events.WallCollision?.Invoke(WallType.leftWall);
+            Events.WallCollision?.Invoke(WallType.LeftWall);
         }
         if(other.gameObject.tag == "Player"){
             DirectionChangeByPlayer();
