@@ -64,7 +64,6 @@ public class GameController : MonoBehaviour
         else{
             StartNewRound();
         }
-
     }
 
     private void ShowWinnerLabel(PlayerType playerType)
@@ -112,8 +111,7 @@ public class GameController : MonoBehaviour
         ResetScore();
         StartNewRound();
     }
-    //param to correspond signal
-    public void StartNewRound(WallType obj){
+    public void StartNewRound(){
         if(gameStats.LeftPlayerScore==gameStats.ScoreToWin||gameStats.RightPlayerScore==gameStats.ScoreToWin)
         {
             return;
@@ -124,10 +122,7 @@ public class GameController : MonoBehaviour
         ballController.PlayFadeAnimation();
         StartCoroutine(ballController.WaitAndStartMoving());
     }
-    //same method but without param
-    public void StartNewRound(){
-        StartNewRound(WallType.NotSetted);
-    }
+    
     private void RepositionBall()
     {
         ball.transform.position = gameStats.InitBallPosition;

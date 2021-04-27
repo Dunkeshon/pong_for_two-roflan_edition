@@ -21,7 +21,6 @@ public class BallController : MonoBehaviour
                 ballSpeed=value;
             }
         }
-
     }
     public Rigidbody2D rb;
     private AudioSource audioSource;
