@@ -131,6 +131,7 @@ public class GameController : MonoBehaviour
     private IEnumerator IncreaseBallSpeedRoutine(){
         while(ballController.BallSpeed<gameStats.MaxBallSpeed){
             ballController.BallSpeed += 1;
+            Debug.Log("New speed is "+ ballController.BallSpeed);
             yield return new WaitForSeconds(3);
         }
     }
@@ -146,9 +147,10 @@ public class GameController : MonoBehaviour
         StartCoroutine(ballController.WaitAndStartMoving());
     }
 
+
     private void ResetBallSpeed(){
-        ballController.BallSpeed = gameStats.DefaultBallSpeed;
         ballController.rb.velocity = gameStats.StartVelocity;
+        ballController.BallSpeed = gameStats.DefaultBallSpeed;
     }
     private void RepositionBall()
     {
