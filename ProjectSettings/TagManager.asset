@@ -8,6 +8,7 @@ TagManager:
   - left gate
   - ball
   - rightGate
+  - LevelRestriction
   layers:
   - Default
   - TransparentFX

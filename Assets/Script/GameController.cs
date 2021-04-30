@@ -40,14 +40,19 @@ public class GameController : MonoBehaviour
         Events.WallCollision += GoalScored;
         Events.ScoreChanged += UpdateUiscore;
         Events.PlayerWon += ShowWinnerLabel;
+        Events.PlayerWon += HideBall;
+        Events.BallOutOfPlayField+=StartNewRound;
         //to do 
         //when win - hide player
         //ball acceleration corotine during each round 
     }
+
     private void OnDisable() {
         Events.WallCollision -= GoalScored;
         Events.ScoreChanged  -= UpdateUiscore;
         Events.PlayerWon -= ShowWinnerLabel;
+        Events.PlayerWon -= HideBall;
+        Events.BallOutOfPlayField-=StartNewRound;
     }
 
     private void GoalScored(WallType wallType)
@@ -94,9 +99,6 @@ public class GameController : MonoBehaviour
             Debug.Log("don't know how to output unknown player type's score");
         }
     }
-
-
-
     void ScoreGoal(WallType wallType){
         if(wallType==WallType.LeftWall){
             gameStats.RightPlayerScore++;
@@ -109,20 +111,37 @@ public class GameController : MonoBehaviour
     
     public void StartNewMatch(){
         ResetScore();
+        if(ball.activeSelf==false){
+            ball.SetActive(true);
+        }
         StartNewRound();
     }
-    public void StartNewRound(){
-        if(gameStats.LeftPlayerScore==gameStats.ScoreToWin||gameStats.RightPlayerScore==gameStats.ScoreToWin)
+    public void StartNewRound()
+    {
+        if (ball.activeSelf == false)
         {
             return;
         }
         RepositionBall();
-        ballController.BallSpeed = gameStats.DefaultBallSpeed;
-        ballController.rb.velocity = gameStats.StartVelocity;
+        ResetBallSpeed();
+        StartGameDelayAnimation();
+    }
+
+    private void HideBall(PlayerType player = PlayerType.NotSetted)
+    {
+        ball.SetActive(false);
+    }
+    
+    private void StartGameDelayAnimation()
+    {
         ballController.PlayFadeAnimation();
         StartCoroutine(ballController.WaitAndStartMoving());
     }
-    
+
+    private void ResetBallSpeed(){
+        ballController.BallSpeed = gameStats.DefaultBallSpeed;
+        ballController.rb.velocity = gameStats.StartVelocity;
+    }
     private void RepositionBall()
     {
         ball.transform.position = gameStats.InitBallPosition;
@@ -191,6 +210,7 @@ public static class Events{
     public static Action<PlayerType> PlayerWon; 
     public static Action<WallType> WallCollision;
     public static Action<PlayerType,int> ScoreChanged;
+    public static Action BallOutOfPlayField;
     
 }
 

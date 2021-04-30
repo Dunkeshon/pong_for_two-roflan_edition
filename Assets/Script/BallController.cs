@@ -50,6 +50,11 @@ public class BallController : MonoBehaviour
             BorderTouch();
         }
     }
+    private void OnTriggerExit2D(Collider2D other) {
+        if(other.gameObject.tag=="LevelRestriction"){
+            Events.BallOutOfPlayField?.Invoke();
+        }
+    }
     public void PlayFadeAnimation(){
         anim.Play("startGameAnim");
     }
