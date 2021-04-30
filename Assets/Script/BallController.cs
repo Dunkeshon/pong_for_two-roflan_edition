@@ -34,6 +34,9 @@ public class BallController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
+    private void Update() {
+        Debug.Log(ballSpeed);
+    }
 
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.tag=="rightGate"){

@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using TMPro;
 
@@ -21,6 +21,8 @@ public class GameController : MonoBehaviour
 
     private TextMeshProUGUI rightPlayerScoreUiText; 
 
+    private IEnumerator increaseSpeedRoutine;
+
     
 
     private void Awake() {
@@ -32,6 +34,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         gameStats = new GameStats();
+        increaseSpeedRoutine = IncreaseBallSpeedRoutine();
         //temporary
         StartNewMatch();
     }
@@ -42,9 +45,6 @@ public class GameController : MonoBehaviour
         Events.PlayerWon += ShowWinnerLabel;
         Events.PlayerWon += HideBall;
         Events.BallOutOfPlayField+=StartNewRound;
-        //to do 
-        //when win - hide player
-        //ball acceleration corotine during each round 
     }
 
     private void OnDisable() {
@@ -122,16 +122,24 @@ public class GameController : MonoBehaviour
         {
             return;
         }
+        StopCoroutine(increaseSpeedRoutine);
         RepositionBall();
         ResetBallSpeed();
         StartGameDelayAnimation();
+        StartCoroutine(increaseSpeedRoutine);
+    }
+    private IEnumerator IncreaseBallSpeedRoutine(){
+        while(ballController.BallSpeed<gameStats.MaxBallSpeed){
+            ballController.BallSpeed += 1;
+            yield return new WaitForSeconds(3);
+        }
     }
 
     private void HideBall(PlayerType player = PlayerType.NotSetted)
     {
         ball.SetActive(false);
     }
-    
+
     private void StartGameDelayAnimation()
     {
         ballController.PlayFadeAnimation();
@@ -213,4 +221,3 @@ public static class Events{
     public static Action BallOutOfPlayField;
     
 }
-
