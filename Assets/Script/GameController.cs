@@ -47,6 +47,17 @@ public class GameController : MonoBehaviour
         Events.BallOutOfPlayField+=StartNewRound;
     }
 
+    private void WaitAndStartRound(float seconds)
+    {
+        StartCoroutine(WaitToStartRoundRoutine(seconds));
+    }
+    IEnumerator WaitToStartRoundRoutine(float seconds){
+        ball.SetActive(false);
+        yield return new WaitForSeconds(seconds);
+        ball.SetActive(true);
+        StartNewRound();
+    }
+
     private void OnDisable() {
         Events.WallCollision -= GoalScored;
         Events.ScoreChanged  -= UpdateUiscore;
@@ -67,9 +78,22 @@ public class GameController : MonoBehaviour
             Events.PlayerWon?.Invoke(PlayerType.Right);
         }
         else{
-            StartNewRound();
+            WaitAndStartRound(1f);
+            AnimateScoreChange(wallType);
+            //StartNewRound();
         }
     }
+
+    private void AnimateScoreChange(WallType wallType)
+    {
+        if(wallType==WallType.LeftWall){
+          //  ScoreHandlerAnimation();
+        }
+        else if(wallType==WallType.RightWall){
+
+        }
+    }
+
 
     private void ShowWinnerLabel(PlayerType playerType)
     {
@@ -122,17 +146,28 @@ public class GameController : MonoBehaviour
         {
             return;
         }
-        StopCoroutine(increaseSpeedRoutine);
+        StopSpeedIncreasing();
         RepositionBall();
         ResetBallSpeed();
         StartGameDelayAnimation();
         StartCoroutine(increaseSpeedRoutine);
     }
+
+    private void StopSpeedIncreasing()
+    {
+        StopCoroutine(increaseSpeedRoutine);
+    }
+
     private IEnumerator IncreaseBallSpeedRoutine(){
-        while(ballController.BallSpeed<gameStats.MaxBallSpeed){
-            ballController.BallSpeed += 1;
-            Debug.Log("New speed is "+ ballController.BallSpeed);
-            yield return new WaitForSeconds(3);
+        while(true){
+            if(ballController.BallSpeed<gameStats.MaxBallSpeed){
+                ballController.BallSpeed += 1;
+                Debug.Log("New speed is "+ ballController.BallSpeed);
+                yield return new WaitForSeconds(3);
+            }
+            else{
+                yield return new WaitForSeconds(3);
+            }
         }
     }
 
@@ -160,6 +195,7 @@ public class GameController : MonoBehaviour
         gameStats.LeftPlayerScore = gameStats.DefaultScore; 
         gameStats.RightPlayerScore = gameStats.DefaultScore;
     }
+
 }
 public class GameStats{
 
@@ -173,9 +209,9 @@ public class GameStats{
     public Vector3 InitBallPosition; 
 
     public int MaxBallSpeed = 20;
-    public int DefaultBallSpeed = 9;
+    public int DefaultBallSpeed = 11;
     public Vector3 StartVelocity;
-    public int ScoreToWin = 2 ;
+    public int ScoreToWin = 5 ;
     public int DefaultScore = 0;
     private int leftPlayerScore;
     private int rightPlayerScore;

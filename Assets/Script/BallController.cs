@@ -82,7 +82,7 @@ public class BallController : MonoBehaviour
       
     }
     private void BorderTouch(){
-        Vector2 direction = new Vector2(rb.velocity.x, -rb.velocity.y + UnityEngine.Random.Range(-0.1f,0.1f));
+        Vector2 direction = new Vector2(rb.velocity.x, -rb.velocity.y);
         rb.velocity = direction.normalized * BallSpeed;
        
     }

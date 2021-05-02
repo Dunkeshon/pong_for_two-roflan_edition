@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     public KeyCode inputDown;
     private Rigidbody2D rb;
 
-    public float speed = 5.5f;
+    public float speed = 8f; //5.5f;
 
     private float topScreenBorder = 4.25f;
     private float bottomScreenBorder = -4.25f;
