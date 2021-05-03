@@ -9,7 +9,7 @@ public class GameController : MonoBehaviour
 
     [SerializeField]
     private GameObject ball;
-    private BallController ballController;
+    public BallController BallController;
 
     [SerializeField]
     private GameObject leftPlayerScoreUiHandler;
@@ -27,7 +27,7 @@ public class GameController : MonoBehaviour
 
     private void Awake() {
         ball = GameObject.FindGameObjectWithTag("ball");
-        ballController = ball.GetComponent<BallController>();    
+        BallController = ball.GetComponent<BallController>();    
         leftPlayerScoreUiText = leftPlayerScoreUiHandler.GetComponent<TextMeshProUGUI>();
         rightPlayerScoreUiText = rightPlayerScoreUiHandler.GetComponent<TextMeshProUGUI>();
     }
@@ -160,9 +160,9 @@ public class GameController : MonoBehaviour
 
     private IEnumerator IncreaseBallSpeedRoutine(){
         while(true){
-            if(ballController.BallSpeed<gameStats.MaxBallSpeed){
-                ballController.BallSpeed += 1;
-                Debug.Log("New speed is "+ ballController.BallSpeed);
+            if(BallController.BallSpeed<gameStats.MaxBallSpeed){
+                BallController.BallSpeed += 1;
+                Debug.Log("New speed is "+ BallController.BallSpeed);
                 yield return new WaitForSeconds(3);
             }
             else{
@@ -178,14 +178,14 @@ public class GameController : MonoBehaviour
 
     private void StartGameDelayAnimation()
     {
-        ballController.PlayFadeAnimation();
-        StartCoroutine(ballController.WaitAndStartMoving());
+        BallController.PlayFadeAnimation();
+        StartCoroutine(BallController.WaitAndStartMoving());
     }
 
 
     private void ResetBallSpeed(){
-        ballController.rb.velocity = gameStats.StartVelocity;
-        ballController.BallSpeed = gameStats.DefaultBallSpeed;
+        BallController.rb.velocity = gameStats.StartVelocity;
+        BallController.BallSpeed = gameStats.DefaultBallSpeed;
     }
     private void RepositionBall()
     {
@@ -253,7 +253,7 @@ public class GameStats{
 }
 
 public static class Events{
-    public static Action<PlayerType> PlayerWon; 
+    public static Action<PlayerType> PlayerWon;
     public static Action<WallType> WallCollision;
     public static Action<PlayerType,int> ScoreChanged;
     public static Action BallOutOfPlayField;
