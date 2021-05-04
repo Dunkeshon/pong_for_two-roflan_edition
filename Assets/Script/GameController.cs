@@ -23,6 +23,9 @@ public class GameController : MonoBehaviour
 
     private IEnumerator increaseSpeedRoutine;
 
+    [SerializeField] 
+    GameObject guideCanvas;
+
 
     
 
@@ -36,14 +39,23 @@ public class GameController : MonoBehaviour
     {
         gameStats = new GameStats();
         increaseSpeedRoutine = IncreaseBallSpeedRoutine();
-        //temporary
+        StartCoroutine(ShowTutorialAndStart());
+    }
+
+    IEnumerator ShowTutorialAndStart()
+    {
+        guideCanvas.SetActive(true);
+        yield return new WaitForSeconds(4);
+        guideCanvas.SetActive(false);
         StartNewMatch();
     }
+
     private void OnEnable() {
 
         Events.WallCollision += GoalScored;
         Events.ScoreChanged += UpdateUiscore;
         Events.PlayerWon += HideBall;
+        Events.PlayerWon += StopSpeedIncreasing;
         Events.BallOutOfPlayField+=StartNewRound;
     }
 
@@ -62,6 +74,7 @@ public class GameController : MonoBehaviour
         Events.WallCollision -= GoalScored;
         Events.ScoreChanged  -= UpdateUiscore;
         Events.PlayerWon -= HideBall;
+        Events.PlayerWon -= StopSpeedIncreasing;
         Events.BallOutOfPlayField-=StartNewRound;
     }
 
@@ -137,7 +150,7 @@ public class GameController : MonoBehaviour
         StartCoroutine(increaseSpeedRoutine);
     }
 
-    private void StopSpeedIncreasing()
+    private void StopSpeedIncreasing(PlayerType type = PlayerType.NotSetted)
     {
         StopCoroutine(increaseSpeedRoutine);
     }
@@ -146,7 +159,6 @@ public class GameController : MonoBehaviour
         while(true){
             if(BallController.BallSpeed<gameStats.MaxBallSpeed){
                 BallController.BallSpeed += 1;
-                Debug.Log("New speed is "+ BallController.BallSpeed);
                 yield return new WaitForSeconds(3);
             }
             else{
@@ -192,10 +204,10 @@ public class GameStats{
     
     public Vector3 InitBallPosition; 
 
-    public int MaxBallSpeed = 20;
+    public int MaxBallSpeed = 22;
     public int DefaultBallSpeed = 11;
     public Vector3 StartVelocity;
-    public int ScoreToWin = 2 ;
+    public int ScoreToWin = 5 ;
     public int DefaultScore = 0;
     private int leftPlayerScore;
     private int rightPlayerScore;

@@ -74,7 +74,6 @@ public class InGameUiScripts : MonoBehaviour
         }
         WinningCanvas.SetActive(true);
         winningTextUI.text = winnerText;
-        Debug.Log("sdfdffd");
     }
 
 }
